@@ -1,0 +1,542 @@
+////###########################################################################
+//// Description:
+////###########################################################################
+//// $TI Release:  $
+//// $Release Date:  $
+////###########################################################################
+//
+////#include <sin_shared.h>
+//#include "DSP28x_Project.h"
+//#include "CLAmath.h"
+//
+//
+//void GetCurrentA(void);
+//void ProcessCurrentLoopA(void);
+//void ClarkTransformationA(void);
+//void ParkTransformationA(void);
+//void IParkTransformationA(void);
+//void SVPWMA(void);
+//void BLDC_PWM(void);
+//void DriveAllOff(void);
+//void DriveTemp1(void);
+//void DriveTemp2(void);
+//void DriveTemp3(void);
+//void DriveTemp4(void);
+//void DriveTemp5(void);
+//void DriveTemp6(void);
+//void InitDriverParam(void);
+//void PI_CUR_MACRO(PI_CUR_CONTROLLER *v);
+//void RESET_PI_CUR(PI_CUR_CONTROLLER *v);
+//
+//
+///******************PMSM*******************/
+__interrupt void Cla1Task1 ( void )
+{
+//
+//// 获取处理三相电流
+//    GetCurrentA();
+//
+//// 电流环运算 包括CLARK变换等
+//    ProcessCurrentLoopA();
+//
+}
+//
+///******************BLDC*******************/
+__interrupt void Cla1Task2 ( void )
+{
+//    // 获取处理三相电流
+//    GetCurrentA();
+//
+//    //无故障；旋变故障不算故障
+//    if((g_stCpuToClaData.iState.all==0x00) || (g_stCpuToClaData.iState.all==0x10) || (g_stCpuToClaData.iState.all==0x01))
+//    {
+//        BLDC_PWM();
+//    }
+//    else
+//    {
+//        //关上桥臂和关下桥臂
+//         DriveAllOff();
+//    }
+}
+//
+__interrupt void Cla1Task8 ( void )
+{
+//    InitDriverParam();
+//    g_SinEleAngleA = 0;
+//    g_CosEleAngleA = 0;
+//    g_stClaToCpuData.iCurrentHallState=0x0;
+}
+//
+//// 获取处理三相电流
+//void GetCurrentA(void)
+//{
+//    //================================ Get current A\B\C Phase =================================================
+//    g_stMotorCurrentA.U = g_fMeaCurrentU;
+//    g_stMotorCurrentA.V = g_fMeaCurrentV;
+//    g_stMotorCurrentA.W = g_fMeaCurrentW;
+//}
+//
+//
+//// 电流环运算 包括CLARK变换等
+//void ProcessCurrentLoopA(void)
+//{
+//    // Clark 变换  三项静止坐标系abc变为两项静止坐标系αβ
+//    ClarkTransformationA();
+//
+//    // 计算电角度正余弦的值，以便坐标变换用
+//    g_SinEleAngleA = CLAsin(EleAngleA);
+//    g_CosEleAngleA = CLAcos(EleAngleA);
+//
+//    // Park 变换  两项静止坐标系αβ变为两项旋转坐标系dq
+//    ParkTransformationA();
+//
+//    /*******************工作模式判断,执行响应操作**********************/
+//    switch((g_stCpuToClaData.iWorkMode&0x0FF))
+//    {
+//        case ewmHold:     // 待机工作模式
+//            RESET_PI_CUR(&g_piCurdLoopA);
+//            RESET_PI_CUR(&g_piCurqLoopA);
+//            RESET_LP_FILTER(g_lpfRefCurrentQ);
+//            break;
+//
+//        case ewmCurrentOpenGuide:     // 电流开环工作模式，相当于只给q轴电压
+////            g_piCurdLoopA.Out = 0;
+//            // 电流环d轴pi运算
+//            g_piCurdLoopA.Ref = 0;
+//            g_piCurdLoopA.Fbk = g_stMotorCurrentA.D;
+//            PI_CUR_MACRO(&g_piCurdLoopA);
+//
+//            g_piCurqLoopA.Out = g_stCpuToClaData.fRefVoltageQ;
+//            break;
+//
+//        case ewmCurrentCloseGuide:     // 电流闭环工作模式
+//            // 电流环d轴pi运算
+//            g_piCurdLoopA.Ref = 0;
+//            g_piCurdLoopA.Fbk = g_stMotorCurrentA.D;
+//            PI_CUR_MACRO(&g_piCurdLoopA);
+//
+//            // 电流环q轴pi运算
+//            //对输入信号进行滤波
+//            g_lpfRefCurrentQ.Ref = g_stCpuToClaData.fRefCurrentQ;
+//            LP_FILTER_MACRO(g_lpfRefCurrentQ);
+//            g_piCurqLoopA.Ref = g_lpfRefCurrentQ.Out;
+//            g_piCurqLoopA.Fbk = g_stMotorCurrentA.Q;
+//            PI_CUR_MACRO(&g_piCurqLoopA);
+//
+//            break;
+//
+//
+//        case ewmMcEleAngleZero:         // 上电电角度寻0
+//            // 电流环d轴pi运算
+//            g_piCurdLoopA.Ref = g_stCpuToClaData.fRefCurrentD;
+//            g_piCurdLoopA.Fbk = g_stMotorCurrentA.D;
+//            PI_CUR_MACRO(&g_piCurdLoopA);
+////
+////            // 电流环q轴pi运算
+////            g_piCurqLoopA.Ref = 0;
+////            g_piCurqLoopA.Fbk = g_stMotorCurrentA.Q;
+////            PI_CUR_MACRO(&g_piCurqLoopA);
+//
+////            g_piCurdLoopA.Out = 2;
+//            g_piCurqLoopA.Out = 0;
+//            break;
+//
+//        default:    // 其他状态
+//            RESET_PI_CUR(&g_piCurdLoopA);
+//            RESET_PI_CUR(&g_piCurqLoopA);
+//            RESET_LP_FILTER(g_lpfRefCurrentQ);
+//            break;
+//     }
+//
+//    // Park 逆变换  电压两项旋转坐标系dq变为电压两项静止坐标系αβ
+//    IParkTransformationA();
+//
+//    if(g_stCpuToClaData.iState.all==0x00 || g_stCpuToClaData.iState.all==0x10)
+//    {
+//        // SVPWM 计算扇区和每个管子闭合时间
+//        switch((g_stCpuToClaData.iWorkMode&0x0FF))
+//        {
+//        case ewmHold:     // 待机工作模式
+//            DriveAllOff();
+//            break;
+//
+//        case ewmCurrentOpenGuide:
+//            SVPWMA();
+//            break;
+//
+//        case ewmCurrentCloseGuide:
+//            SVPWMA();
+//            break;
+//
+//        case ewmMcEleAngleZero:
+//            SVPWMA();
+//            break;
+//
+//        default:
+//            DriveAllOff();
+//            break;
+//        }
+//    }
+//    else//有故障
+//    {
+//        //关掉所有管子
+//        DriveAllOff();
+//    }
+//
+//}
+//
+//
+//// Clark变换
+//void ClarkTransformationA(void)
+//{
+//    ClarkeA.As = g_stMotorCurrentA.U ;
+//    ClarkeA.Bs = g_stMotorCurrentA.V ;
+//    ClarkeA.Cs = g_stMotorCurrentA.W ;
+//    CLARKE_MACRO(ClarkeA);
+//}
+////
+////
+//// Park变换
+//void ParkTransformationA(void)
+//{
+//    ParkA.Alpha = ClarkeA.Alpha;
+//    ParkA.Beta = ClarkeA.Beta;
+//    ParkA.Sine = g_SinEleAngleA;
+//    ParkA.Cosine = g_CosEleAngleA;
+//    PARK_MACRO(ParkA);
+//
+//    g_stMotorCurrentA.D = ParkA.Ds;
+//    g_stMotorCurrentA.Q = ParkA.Qs;
+//
+//    g_fMeaCurrentD=g_stMotorCurrentA.D;
+//    g_fMeaCurrentQ=g_stMotorCurrentA.Q;
+//}
+////
+////
+////// Park逆变换
+//void IParkTransformationA(void)
+//{
+//    IparkA.Ds= g_piCurdLoopA.Out;
+//    IparkA.Qs= g_piCurqLoopA.Out;
+//    IparkA.Sine = g_SinEleAngleA;
+//    IparkA.Cosine = g_CosEleAngleA;
+//    IPARK_MACRO (IparkA);
+//}
+////
+////
+////// 计算扇区以及管子开通时间
+//void SVPWMA(void)
+//{
+//    Svgen_dqA.Ualpha = 1.7320508*IparkA.Alpha/(g_stDriverParamA.fDcPowerVoltage); //归一化,相电压=Udc/sqrt(3)  提前除了相电压，SVPWM内部就不用除了
+//    Svgen_dqA.Ubeta  = 1.7320508*IparkA.Beta/(g_stDriverParamA.fDcPowerVoltage); //sqrt(3)=1.7320508
+//    Svgen_dqA.svpwm_Period = PWM_Period;
+//
+//    SVGEN_MACRO(Svgen_dqA);       //计算
+//
+//    EPwm1Regs.CMPA.half.CMPA = Svgen_dqA.CMPA1;
+//    EPwm2Regs.CMPA.half.CMPA = Svgen_dqA.CMPA2;
+//    EPwm3Regs.CMPA.half.CMPA = Svgen_dqA.CMPA3;
+//
+//    //因为没有配置死区，所以需要人为的配置下桥臂的CMP的值
+//    EPwm1Regs.CMPB = (Svgen_dqA.CMPA1<Dead_Time)?(0):(Svgen_dqA.CMPA1-Dead_Time);
+//    EPwm2Regs.CMPB = (Svgen_dqA.CMPA2<Dead_Time)?(0):(Svgen_dqA.CMPA2-Dead_Time);
+//    EPwm3Regs.CMPB = (Svgen_dqA.CMPA3<Dead_Time)?(0):(Svgen_dqA.CMPA3-Dead_Time);
+//
+//}
+//
+//void BLDC_PWM(void)
+//{
+//    /************************获得当前的霍尔状态*************************/
+//    g_stClaToCpuData.iCurrentHallState = g_stCpuToClaData.iCurrentHallState;
+//
+//    // 生成CMP
+//
+//    //对命令进行低通
+//    g_lpfPwmPercent.Ref = g_stCpuToClaData.fRefPwmPercent;
+//    LP_FILTER_MACRO(g_lpfPwmPercent);
+//
+//    g_stClaToCpuData.iCmp = (unsigned short)(fabs(100-fabs(g_lpfPwmPercent.Out))*0.01*PWM_Period);
+//
+//    // 生成相对应的6路PWM
+//    g_stClaToCpuData.bDir = (g_lpfPwmPercent.Out>0.0)?1:0;  // 1：正转   0：反转
+//
+//
+//    /*****************************************************************************
+//     *电机顺时针方向TEMP1-TEMP2-TEMP3-TEMP4-TEMP5-TEMP6-TEMP1
+//     *电机逆时针方向TEMP1-TEMP6-TEMP5-TEMP4-TEMP3-TEMP2-TEMP1
+//     *上桥臂开关，下桥臂斩波方式
+//     *                 Temp6           Temp1
+//     *                      -   100  -
+//     *                   101  -    -   110
+//     *           Temp5  - ----------------- Temp2
+//     *                   001 -     -  010
+//     *                       -  011   -
+//     *                Temp4           Temp3
+//     *
+//     *      Temp1:UV; Temp2:UW; Temp3:VW; Temp4:VU; Temp5:WU; Temp6:WV
+//    dc-bus+ ------------------------------------------
+//                |               |               |
+//               1 [UH ePWM1A]   3 [VH ePWM2A]   5 [WH ePWM3A]
+//                |------U(A)     |------V(B)     |------W(C)
+//               4 [UL ePWM1B]   6 [VL ePWM2B]   2 [WL ePWM3B]
+//                |               |               |
+//    dc-bus- -----------------------------------------
+//***********************************************************************/
+//
+//    switch((g_stCpuToClaData.iWorkMode&0x0FF))
+//    {
+//        case ewmHold:
+//            RESET_LP_FILTER(g_lpfPwmPercent);
+//            DriveAllOff();
+//            g_stClaToCpuData.iCmp=0;
+//            break;
+//
+//        case ewmBLDCOpenGuide:
+//            switch(g_stClaToCpuData.iCurrentHallState&0x7)
+//            {         // 霍尔ABC
+//            case 4:         // 100
+//                if(1==g_stClaToCpuData.bDir){
+//                    DriveTemp2();
+//                }
+//                else{
+//                    DriveTemp5();
+//                }
+//                break;
+//            case 6:         // 110
+//                if(1==g_stClaToCpuData.bDir){
+//                    DriveTemp3();
+//                }
+//                else{
+//                    DriveTemp6();
+//                }
+//                break;
+//            case 2:         // 010
+//                if(1==g_stClaToCpuData.bDir){
+//                    DriveTemp4();
+//                }
+//                else{
+//                    DriveTemp1();
+//                }
+//                break;
+//            case 3:         // 011
+//                if(1==g_stClaToCpuData.bDir){
+//                    DriveTemp5();
+//                }
+//                else{
+//                    DriveTemp2();
+//                }
+//                break;
+//            case 1:         // 001
+//                if(1==g_stClaToCpuData.bDir){
+//                    DriveTemp6();
+//                }
+//                else{
+//                    DriveTemp3();
+//                }
+//                break;
+//            case 5:         // 101
+//                if(1==g_stClaToCpuData.bDir){
+//                    DriveTemp1();
+//                }
+//                else{
+//                    DriveTemp4();
+//                }
+//                break;
+//                // 所有管子关闭
+//            default:
+//                DriveAllOff();
+//                break;
+//            }
+//
+//            break;
+//
+//            // 所有管子关闭
+//            default:
+//                DriveAllOff();
+//                break;
+//    }
+//
+//}
+//
+//
+//void DriveAllOff(void){
+//    UH = MOSFET_H_OFF;   VH = MOSFET_H_OFF;   WH = MOSFET_H_OFF;
+//    UL = MOSFET_L_OFF;   VL = MOSFET_L_OFF;   WL = MOSFET_L_OFF;
+//}
+//
+//void DriveTemp1(void){
+//    UH = g_stClaToCpuData.iCmp;     VH = MOSFET_H_OFF;          WH = MOSFET_H_OFF;
+//    UL = MOSFET_L_OFF;    VL = MOSFET_L_ON;     WL = MOSFET_L_OFF;
+//}
+//
+//void DriveTemp2(void){
+//    UH = g_stClaToCpuData.iCmp;     VH = MOSFET_H_OFF;   WH = MOSFET_H_OFF;
+//    UL = MOSFET_L_OFF;    VL = MOSFET_L_OFF;   WL = MOSFET_L_ON;
+//}
+//
+//void DriveTemp3(void){
+//    UH = MOSFET_H_OFF;   VH = g_stClaToCpuData.iCmp;      WH = MOSFET_H_OFF;
+//    UL = MOSFET_L_OFF;   VL = MOSFET_L_OFF;     WL = MOSFET_L_ON;
+//}
+//
+//void DriveTemp4(void){
+//    UH = MOSFET_H_OFF;    VH = g_stClaToCpuData.iCmp;     WH = MOSFET_H_OFF;
+//    UL = MOSFET_L_ON;          VL = MOSFET_L_OFF;    WL = MOSFET_L_OFF;
+//}
+//
+//void DriveTemp5(void){
+//    UH = MOSFET_H_OFF;    VH = MOSFET_H_OFF;   WH = g_stClaToCpuData.iCmp;
+//    UL = MOSFET_L_ON;          VL = MOSFET_L_OFF;   WL = MOSFET_L_OFF;
+//}
+//
+//void DriveTemp6(void){
+//    UH = MOSFET_H_OFF;   VH = MOSFET_H_OFF;     WH = g_stClaToCpuData.iCmp;
+//    UL = MOSFET_L_OFF;   VL = MOSFET_L_ON;           WL = MOSFET_L_OFF;
+//}
+//
+//
+//__interrupt void Cla1Task3 ( void )
+//{
+//
+//}
+//__interrupt void Cla1Task4 ( void )
+//{
+//
+//}
+//__interrupt void Cla1Task5 ( void )
+//{
+//
+//}
+//__interrupt void Cla1Task6 ( void )
+//{
+//
+//}
+//__interrupt void Cla1Task7 ( void )
+//{
+//
+//}
+//__interrupt void Cla1Task8 ( void )
+//{
+//
+//}
+//
+////初始化驱动器参数
+//void InitDriverParam(void)
+//{
+//    float temp;
+//
+//    g_piCurqLoopA.Freq = INT_FREQ;
+//    g_piCurqLoopA.Kp = g_stDriverParamA.fCurPidKp;
+//    g_piCurqLoopA.Ti = g_stDriverParamA.fCurPidTi;
+//    g_piCurqLoopA.Ki = 1.0/(2.0*g_piCurqLoopA.Ti*g_piCurqLoopA.Freq);
+//    g_piCurqLoopA.Kc = g_stDriverParamA.fCurPidKc;
+//
+//    g_piCurqLoopA.OutMax = 0.573*g_stDriverParamA.fDcPowerVoltage;
+//    g_piCurqLoopA.OutMin = -0.573*g_stDriverParamA.fDcPowerVoltage;
+//
+//
+//    g_piCurdLoopA.Freq = g_piCurqLoopA.Freq;
+//    g_piCurdLoopA.Kp = g_piCurqLoopA.Kp;
+//    g_piCurdLoopA.Ti = g_piCurqLoopA.Ti;
+//    g_piCurdLoopA.Ki = g_piCurqLoopA.Ki;
+//
+//    g_piCurdLoopA.Kc =  g_piCurqLoopA.Kc;
+//    g_piCurdLoopA.OutMax = 0.573*g_stDriverParamA.fDcPowerVoltage;
+//    g_piCurdLoopA.OutMin = -0.573*g_stDriverParamA.fDcPowerVoltage;
+//
+//
+//    //初始化PWM参考低通
+//    g_lpfPwmPercent.Umax = 100;
+//    g_lpfPwmPercent.Umin = -100;
+//    g_lpfPwmPercent.LpFreq= 0.05;
+//
+//    temp  = 3.14159f*g_lpfPwmPercent.LpFreq;
+//    temp = ((float)INT_FREQ)/temp;
+//    g_lpfPwmPercent.KOut = (temp-1)/(temp+1);
+//    g_lpfPwmPercent.KIn =  1.0/(temp+1);
+//
+//
+//    //初始化Q轴电流参考低通
+//    g_lpfRefCurrentQ.Umax = 150;
+//    g_lpfRefCurrentQ.Umin = -150;
+//    g_lpfRefCurrentQ.LpFreq = 0.2;
+//    temp  = 3.14159f*g_lpfRefCurrentQ.LpFreq;
+//    temp = ((float)INT_FREQ)/temp;
+//    g_lpfRefCurrentQ.KOut = (temp-1)/(temp+1);
+//    g_lpfRefCurrentQ.KIn =  1.0/(temp+1);
+//
+//}
+//
+//void PI_CUR_MACRO(PI_CUR_CONTROLLER *v)
+//{
+//   if(v->Ti>0)
+//   {
+//       v->Ki = 1.0/(2.0*v->Ti*v->Freq);
+//   }
+//
+//   // Compute the error
+//   v->Err = v->Ref - v->Fbk;
+//
+//   // Compute the proportional output
+//   v->Up = v->Kp*v->Err;
+//
+//   if(v->Ti<=0)
+//   {
+//       v->Ui = 0;
+//   }
+//   else
+//   {
+//       if(v->Kc<0)    // Kc>0和Kc<0时才有的两种不同的退饱和方法
+//       {
+//           v->Ui = ( v->Ui + v->Ki*(v->Up+v->Up1) )*v->ClampingSign;
+//       }
+//       else
+//       {
+//           v->Ui = v->Ui + v->Ki*(v->Up+v->Up1) + v->Kc*v->SatErr;
+//       }
+//   }
+//
+//    // Compute the pre-saturated output
+//    v->OutPreSat = v->Up + v->Ui;
+//
+//    // Saturate the output
+//    if (v->OutPreSat > v->OutMax)
+//    {
+//        v->Out = v->OutMax;
+//        v->ClampingSign = 0;
+//    }
+//    else
+//    {
+//        if (v->OutPreSat < v->OutMin)
+//        {
+//            v->Out = v->OutMin;
+//            v->ClampingSign = 0;
+//        }
+//        else
+//        {
+//            v->Out = v->OutPreSat;
+//            v->ClampingSign = 1;
+//        }
+//    }
+//
+//    // Compute the saturate difference
+//    v->SatErr = v->Out - v->OutPreSat;
+//
+//    // Update the previous proportional output
+//    v->Up1 = v->Up;
+//
+//}
+//
+//void RESET_PI_CUR(PI_CUR_CONTROLLER *v)
+//{
+//    v->Out = 0;
+//    v->Up = 0;
+//    v->Up1 = 0;
+//    v->Ui = 0;
+//    v->OutPreSat = 0;
+//    v->SatErr = 0;
+//    v->ClampingSign = 1;
+//    v->Err = 0;
+//    v->Fbk = 0;
+//    v->Ref = 0;
+//}
