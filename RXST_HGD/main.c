@@ -10,6 +10,7 @@ __interrupt void epwm3_tzint_isr(void);
 void PI_CUR_MACRO(PI_CUR_CONTROLLER *v);
 void RESET_PI_CUR(PI_CUR_CONTROLLER *v);
 void InitDriverParam(void);
+void InitOffset(void);
 Uint16 temp1;
 Uint16 temp2;
 Uint16 index=0;
@@ -121,6 +122,11 @@ main()
 
     InitEPwm();
 
+    EPwm1Regs.AQCSFRC.all = 0x09;  //上桥臂off，下桥臂ON
+    EPwm2Regs.AQCSFRC.all = 0x09;  //上桥臂off，下桥臂ON
+    EPwm4Regs.AQCSFRC.all = 0x09;  //上桥臂off，下桥臂ON
+    EPwm5Regs.AQCSFRC.all = 0x09;  //上桥臂off，下桥臂ON
+
     // GPIO4(使能信号) GPIO53(Fault指示灯) GPIO55(Fault信号)
     EALLOW;
 
@@ -222,30 +228,30 @@ __interrupt void epwm1_isr(void)
 
 
 
-    if(!SampleFlag)
-    {
-        if( index < SampleSize )
-        {
-
-            SumA += AdcResult.ADCRESULT0;               //Get sample
-            SumB += AdcResult.ADCRESULT1;               //Get sample
-            SumC += AdcResult.ADCRESULT2;
-            SumD += AdcResult.ADCRESULT3;
-
-            index++;
-        }
-        else
-        {
-            SampleFlag=1;
-        }
-
-        g_stCpuToClaData.fRefCurrentOffsetA = SumA / SampleSize;    //Calculate average ADC sample value
-        g_stCpuToClaData.fMeaCurrentOffsetA = SumB / SampleSize;    //Calculate average ADC sample value
-        g_stCpuToClaData.fRefCurrentOffsetB = SumC / SampleSize;
-        g_stCpuToClaData.fMeaCurrentOffsetB = SumD / SampleSize;
-
-
-    }
+//    if(!SampleFlag)
+//    {
+//        if( index < SampleSize )
+//        {
+//
+//            SumA += AdcResult.ADCRESULT0;               //Get sample
+//            SumB += AdcResult.ADCRESULT1;               //Get sample
+//            SumC += AdcResult.ADCRESULT2;
+//            SumD += AdcResult.ADCRESULT3;
+//
+//            index++;
+//        }
+//        else
+//        {
+//            SampleFlag=1;
+//        }
+//
+//        g_stCpuToClaData.fRefCurrentOffsetA = SumA / SampleSize;    //Calculate average ADC sample value
+//        g_stCpuToClaData.fMeaCurrentOffsetA = SumB / SampleSize;    //Calculate average ADC sample value
+//        g_stCpuToClaData.fRefCurrentOffsetB = SumC / SampleSize;
+//        g_stCpuToClaData.fMeaCurrentOffsetB = SumD / SampleSize;
+//
+//
+//    }
 
 
 
@@ -307,6 +313,7 @@ __interrupt void epwm1_isr(void)
     }
     else
     {
+        InitOffset();
         RESET_PI_CUR(&g_piCurLoopA);
         RESET_PI_CUR(&g_piCurLoopB);
 
@@ -347,6 +354,35 @@ void InitCLA(void)
     Cla1ForceTask8();
 }
 
+
+void InitOffset(void)
+{
+    if( index < SampleSize )
+    {
+        SumA += AdcResult.ADCRESULT0;               //Get sample
+        SumB += AdcResult.ADCRESULT1;               //Get sample
+        SumC += AdcResult.ADCRESULT2;
+        SumD += AdcResult.ADCRESULT3;
+
+        index++;
+    }
+    else
+    {
+        g_stCpuToClaData.fRefCurrentOffsetA = SumA / SampleSize;    //Calculate average ADC sample value
+        g_stCpuToClaData.fMeaCurrentOffsetA = SumB / SampleSize;    //Calculate average ADC sample value
+        g_stCpuToClaData.fRefCurrentOffsetB = SumC / SampleSize;
+        g_stCpuToClaData.fMeaCurrentOffsetB = SumD / SampleSize;
+
+        index=0;
+        SumA=0;
+        SumB=0;
+        SumC=0;
+        SumD=0;
+    }
+
+
+
+}
 
 //初始化驱动器参数
 void InitDriverParam(void)
